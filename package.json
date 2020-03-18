@@ -1,0 +1,11 @@
+{
+  "name": "tagesplaner",
+  "version": "1.0.0",
+  "description": "Tagesplaner application to set goals",
+  "main": "./server/index.js",
+  "scripts": {
+    "start": "node ./server/index.js"
+  },
+  "author": "Luxmithan Sukumar",
+  "license": "ISC"
+}
