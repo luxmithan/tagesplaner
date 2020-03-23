@@ -10,13 +10,14 @@ const KNEX = require('../config/knexConfig')
 //Middleware for checking access permissions
 //Gets used in first line of each protected endpoint
 const JWTAUTH = require('../middleware/jwtAuth')
+const MASTERPWD = require('../middleware/masterPwd')
 const BCRYPT = require('bcryptjs')
 const JWT = require('jsonwebtoken')
 
 const USER = EXPRESS.Router()
 
 //Creates new user in DB
-USER.post('/user/register', async (req, res) => {
+USER.post('/user/register', MASTERPWD, async (req, res) => {
   //Checks if username already exists and gives error if true
   let results = await KNEX('user')
     .where('username', req.body.username)
