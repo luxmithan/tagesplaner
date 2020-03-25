@@ -51,6 +51,14 @@
             prepend-icon="mdi-account-badge-horizontal"
           ></v-select>
           <v-text-field
+            v-if="signupData.role === 'Lehrperson'"
+            v-model="signupData.masterPassword"
+            :rules="generalRules"
+            label="Masterpasswort"
+            prepend-icon="mdi-lock-outline"
+            type="password"
+          ></v-text-field>
+          <v-text-field
             v-model="signupData.password"
             :rules="passwordRules"
             label="Passwort"
@@ -86,6 +94,7 @@ export default {
       lastname: '',
       role: '',
       grade: null,
+      masterPassword: null,
       password: '',
       passwordRepeat: ''
     },
@@ -120,6 +129,14 @@ export default {
     }
   },
   methods: {
+    masterRules () {
+      if (this.signupData.role != "Lernende/r" && !this.signupData.masterPassword) {
+        return "Bitte Feld ausfüllen"
+      }
+      else {
+        return true
+      }
+    },
     gradeRules () {
       if (this.signupData.role != "Lehrperson" && !this.signupData.grade) {
         return "Bitte Feld ausfüllen"
@@ -148,6 +165,9 @@ export default {
     async signUp() {
       if (this.role == "Lehrperson") {
         this.grade = null
+      }
+      if (this.role == "Lernende/r") {
+        this.masterPassword = null
       }
       try {
         let response = await axios

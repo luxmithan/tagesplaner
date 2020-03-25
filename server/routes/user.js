@@ -42,7 +42,7 @@ USER.post('/user/register', MASTERPWD, async (req, res) => {
           grade: req.body.grade,
           password: hash
         })
-      res.json(results)
+      return res.json(results)
     }
   });
 });
