@@ -148,14 +148,34 @@
         <div v-if="deviation===0" class="ma-2" >
           <v-btn 
             v-if="item.finished"
+            outlined
             color="success" 
-            @click="finishGoal(item)"
-          >Fertig</v-btn>
+            @click="finishGoal(item)">
+            <v-icon>mdi-check</v-icon>
+          </v-btn>
           <v-btn 
             v-else 
+            outlined
             color="error" 
-            @click="finishGoal(item)"
-          >Nicht fertig</v-btn>
+            @click="finishGoal(item)">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-btn 
+            class="ml-2 mr-2" 
+            outlined 
+            color="indigo"
+            dark
+            @click="editGoal(item)">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn  
+            class="mr-2" 
+            outlined 
+            color="error"
+            dark
+            @click="deleteGoal(item)">
+            <v-icon>mdi-trash-can</v-icon>
+          </v-btn>
         </div>
         <div v-else class="ma-2">
           <p v-if="item.finished" class="success--text">Wurde fertig gemacht.</p>
@@ -169,25 +189,16 @@
           <v-alert class="mt-2" v-if="item.comment" dense text type="info" width="96%">
             {{ item.comment }}
           </v-alert>
-          <div v-if="deviation===0">
-            <v-btn
-              class="mr-2"
-              color="indigo"
-              dark
-              @click="editGoal(item)">
-              Bearbeiten
-            </v-btn>
-            <v-btn 
-              color="error" 
-              @click="deleteGoal(item)">
-              Löschen
-            </v-btn>
-          </div>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
+    <v-progress-linear
+      v-if="loading"
+      class=" pa-1"
+      indeterminate
+    ></v-progress-linear>
     <!-- If there are no goals-->
-    <v-toolbar v-else>Keine Einträge gefunden.</v-toolbar>
+    <v-toolbar v-if="!filteredGoals.length && !loading">Keine Einträge gefunden.</v-toolbar>
   </v-card>
 </template>
 
@@ -196,6 +207,7 @@ import axios from 'axios'
 export default {
   name: 'MyGoals',
   data: () => ({
+    loading: true,
     dateFormatted: '',
     deviation: 0,
     myId: '',
@@ -243,6 +255,7 @@ export default {
       this.myGoals = await axios.get(`/api/goal/getForUser/${this.myId}`)
         .then(results => results.data)
         .catch(err => console.log(err))
+      this.loading = false
       this.newGoal = {
         date: this.dateFormatted,
         userFK: this.myId,

@@ -83,8 +83,13 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
+    <v-progress-linear
+      v-if="loading"
+      class=" pa-1"
+      indeterminate
+    ></v-progress-linear>
     <!-- If there are no goals-->
-    <v-toolbar v-else>Keine Einträge gefunden.</v-toolbar>
+    <v-toolbar v-if="!filteredGoals.length && !loading">Keine Einträge gefunden.</v-toolbar>
   </v-card>
 </template>
 
@@ -93,6 +98,7 @@ import axios from 'axios'
 export default {
   name: 'AllGoals',
   data: () => ({
+    loading: true,
     dateFormatted: '',
     deviation: 0,
     allGoals: [],
@@ -123,6 +129,7 @@ export default {
       this.allGoals = await axios.get(`/api/goal/getAll`)
         .then(results => results.data)
         .catch(err => console.log(err))
+      this.loading = false
     },
     //Changes date of presented goals
     changeDate (change) {
