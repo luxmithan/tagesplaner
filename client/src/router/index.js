@@ -5,54 +5,54 @@
  * Description: Router configurations for Tagesplaner
  */
 
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import MyGoals from '../views/MyGoals.vue'
-import AllGoals from '../views/AllGoals.vue'
-import Profile from '../views/Profile.vue'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import MyGoals from "../views/MyGoals.vue";
+import AllGoals from "../views/AllGoals.vue";
+import Profile from "../views/Profile.vue";
 import Register from "../views/Register.vue";
 import Login from "../views/Login.vue";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/myGoals",
     name: "myGoals",
-    component: MyGoals
+    component: MyGoals,
   },
   {
     path: "/allGoals",
     name: "allGoals",
-    component: AllGoals
+    component: AllGoals,
   },
   {
     path: "/profile",
     name: "profile",
-    component: Profile
+    component: Profile,
   },
   {
     path: "/register",
     name: "register",
-    component: Register
+    component: Register,
   },
   {
     path: "/login",
     name: "login",
-    component: Login
+    component: Login,
   },
   //user goes to "Login" on any other path
   {
     path: "*",
     name: "other",
-    component: Login
-  }
-]
+    component: Login,
+  },
+];
 
 let router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

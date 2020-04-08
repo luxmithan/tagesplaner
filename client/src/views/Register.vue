@@ -35,20 +35,20 @@
             prepend-icon="mdi-account-outline"
             type="text"
           ></v-text-field>
-          <v-select 
+          <v-select
             v-model="signupData.role"
             :rules="generalRules"
             :items="roles"
             label="Rolle"
-            prepend-icon="mdi-account-badge-horizontal"
+            prepend-icon="mdi-badge-account-horizontal"
           ></v-select>
-          <v-select 
+          <v-select
             v-if="signupData.role === 'Lernende/r'"
             v-model="signupData.grade"
             :rules="[ gradeRules ]"
             :items="grades"
             label="Momentane Klasse"
-            prepend-icon="mdi-account-badge-horizontal"
+            prepend-icon="mdi-badge-account-horizontal"
           ></v-select>
           <v-text-field
             v-if="signupData.role === 'Lehrperson'"
@@ -85,96 +85,92 @@
   </v-col>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   data: () => ({
     signupData: {
-      username: '',
-      firstname: '',
-      lastname: '',
-      role: '',
+      username: "",
+      firstname: "",
+      lastname: "",
+      role: "",
       grade: null,
       masterPassword: null,
-      password: '',
-      passwordRepeat: ''
+      password: "",
+      passwordRepeat: ""
     },
-    errorMsg: '',
-    roles: [
-      "Lernende/r",
-      "Lehrperson"
-    ],
-    grades: [
-      "in17",
-      "in18",
-      "in19"
-    ],
+    errorMsg: "",
+    roles: ["Lernende/r", "Lehrperson"],
+    grades: ["in17", "in18", "in19"],
     //Validation rules
-    generalRules: [
-      v => !!v || "Bitte Feld ausfüllen"
-    ],
+    generalRules: [v => !!v || "Bitte Feld ausfüllen"],
     usernameRules: [
       v => !!v || "Bitte Feld ausfüllen",
-      v => (v && v.length <= 12) || "Der Username darf maximal 12 Zeichen lang sein",
-      v => (v && v.length >= 3) || "Der Username muss minimal 3 Zeichen lang sein"
+      v =>
+        (v && v.length <= 12) ||
+        "Der Username darf maximal 12 Zeichen lang sein",
+      v =>
+        (v && v.length >= 3) || "Der Username muss minimal 3 Zeichen lang sein"
     ],
     passwordRules: [
       v => !!v || "Bitte Feld ausfüllen",
-      v => (v && v.length <= 20) || "Das Passwort darf maximal 20 Zeichen lang sein",
-      v => (v && v.length >= 6) || "Das Passwort muss minimal 6 Zeichen lang sein"
+      v =>
+        (v && v.length <= 20) ||
+        "Das Passwort darf maximal 20 Zeichen lang sein",
+      v =>
+        (v && v.length >= 6) || "Das Passwort muss minimal 6 Zeichen lang sein"
     ]
   }),
-  created () {
+  created() {
     if (this.$store.getters.isLoggedIn) {
-      this.$router.push('/myGoals');
+      this.$router.push("/myGoals");
     }
   },
   methods: {
-    masterRules () {
-      if (this.signupData.role != "Lernende/r" && !this.signupData.masterPassword) {
-        return "Bitte Feld ausfüllen"
-      }
-      else {
-        return true
+    masterRules() {
+      if (
+        this.signupData.role != "Lernende/r" &&
+        !this.signupData.masterPassword
+      ) {
+        return "Bitte Feld ausfüllen";
+      } else {
+        return true;
       }
     },
-    gradeRules () {
+    gradeRules() {
       if (this.signupData.role != "Lehrperson" && !this.signupData.grade) {
-        return "Bitte Feld ausfüllen"
-      }
-      else {
-        return true
+        return "Bitte Feld ausfüllen";
+      } else {
+        return true;
       }
     },
-    passwordRepeatRules () {
+    passwordRepeatRules() {
       if (!this.signupData.passwordRepeat) {
-        return "Bitte Feld ausfüllen"
-      }
-      else if (this.signupData.password !== this.signupData.passwordRepeat) {
-        return "Die Beiden Passwörter stimmen nicht überein"
-      }
-      else {
-        return true
+        return "Bitte Feld ausfüllen";
+      } else if (this.signupData.password !== this.signupData.passwordRepeat) {
+        return "Die Beiden Passwörter stimmen nicht überein";
+      } else {
+        return true;
       }
     },
     validate() {
       if (this.$refs.form.validate()) {
-        this.signUp()
+        this.signUp();
       }
     },
     //Function to sign up new user
     async signUp() {
       if (this.role == "Lehrperson") {
-        this.grade = null
+        this.grade = null;
       }
       if (this.role == "Lernende/r") {
-        this.masterPassword = null
+        this.masterPassword = null;
       }
       try {
         let response = await axios
-          .post('/api/user/register', this.signupData)
+          .post("/api/user/register", this.signupData)
           .then(response => response.data);
         this.errorMsg = response.msg;
-        this.$router.push('/login')
+        this.$router.push("/login");
       } catch (error) {
         this.errorMsg = error.response.data.msg;
       }

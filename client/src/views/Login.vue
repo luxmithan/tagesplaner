@@ -12,9 +12,7 @@
         <v-toolbar-title>Login</v-toolbar-title>
       </v-toolbar>
       <v-card-text>
-        <v-form
-          ref="form"
-        >
+        <v-form ref="form">
           <v-text-field
             v-model="loginData.username"
             :rules="generalRules"
@@ -40,45 +38,44 @@
   </v-col>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'Login',
+  name: "Login",
   data: () => ({
     loginData: {
-      username: '',
-      password: ''
+      username: "",
+      password: ""
     },
     //Validation rules
-    generalRules: [
-      v => !!v || "Bitte Feld ausfüllen"
-    ],
-    errorMsg: '',
+    generalRules: [v => !!v || "Bitte Feld ausfüllen"],
+    errorMsg: ""
   }),
-  created () {
+  created() {
     if (this.$store.getters.isLoggedIn) {
-      this.$router.push('/myGoals');
+      this.$router.push("/myGoals");
     }
   },
   methods: {
     //Checks if input is valid
-    validate () {
+    validate() {
       if (this.$refs.form.validate()) {
-        this.login()
+        this.login();
       }
     },
     //Login function
     async login() {
       try {
-        let data = await axios.post('/api/user/login', this.loginData)
+        let data = await axios
+          .post("/api/user/login", this.loginData)
           .then(response => response.data);
         let token = data.token;
         let user = data.user;
-        this.$store.dispatch('login', { token, user });
-        this.$router.push('/myGoals');
+        this.$store.dispatch("login", { token, user });
+        this.$router.push("/myGoals");
       } catch (error) {
         this.errorMsg = error.response.data.msg;
       }
-    },
+    }
   }
 };
 </script>

@@ -5,14 +5,14 @@
  * Description: Config file for Knex to access the database
  */
 
-module.exports = require('knex')({
-  client: 'mysql',
+module.exports = require("knex")({
+  client: "mysql",
   connection: {
-      host: '127.0.0.1',
-      user: 'webuser',
-      password: 'gibbiX12345',
-      database: 'dayplanner_db',
-      timezone: 'UTC',
-      dateStrings: true
-  }
-})
+    host: "127.0.0.1",
+    user: "webuser",
+    password: "gibbiX12345",
+    database: "dayplanner_db",
+    timezone: "UTC",
+    dateStrings: true,
+  },
+});

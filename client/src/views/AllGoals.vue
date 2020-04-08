@@ -6,8 +6,7 @@
  -->
 
 <template>
-  <v-card
-    width="80%">
+  <v-card width="80%">
     <v-toolbar color="primary" dark flat>
       <v-col>
         <v-btn text icon @click="changeDate(-1)">
@@ -15,7 +14,7 @@
         </v-btn>
       </v-col>
       <v-col>
-        <v-toolbar-title >{{ dateFormatted }}</v-toolbar-title>
+        <v-toolbar-title>{{ dateFormatted }}</v-toolbar-title>
       </v-col>
       <v-col>
         <v-btn v-if="deviation<0" text icon @click="changeDate(1)">
@@ -61,14 +60,8 @@
     </v-toolbar>
     <v-divider></v-divider>
     <!-- Displays all filtered goals if exists-->
-    <v-expansion-panels 
-      v-if="filteredGoals.length"
-      v-model="panel" 
-      multiple 
-      focusable
-    ><v-expansion-panel
-        v-for="(item, index) in filteredGoals"
-        :key="index">
+    <v-expansion-panels v-if="filteredGoals.length" v-model="panel" multiple focusable>
+      <v-expansion-panel v-for="(item, index) in filteredGoals" :key="index">
         <v-expansion-panel-header>
           <v-col>{{ item.grade }} {{ item.userfull }}:</v-col>
           <v-col>{{ item.goal }}</v-col>
@@ -77,112 +70,105 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content class="mt-3">
           {{ item.description }}
-          <v-alert class="mt-2" v-if="item.comment" dense text type="info" width="96%">
-            {{ item.comment }}
-          </v-alert>
+          <v-alert
+            class="mt-2"
+            v-if="item.comment"
+            dense
+            text
+            type="info"
+            width="96%"
+          >{{ item.comment }}</v-alert>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-progress-linear
-      v-if="loading"
-      class=" pa-1"
-      indeterminate
-    ></v-progress-linear>
+    <v-progress-linear v-if="loading" class="pa-1" indeterminate></v-progress-linear>
     <!-- If there are no goals-->
     <v-toolbar v-if="!filteredGoals.length && !loading">Keine Einträge gefunden.</v-toolbar>
   </v-card>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 export default {
-  name: 'AllGoals',
+  name: "AllGoals",
   data: () => ({
     loading: true,
-    dateFormatted: '',
+    dateFormatted: "",
     deviation: 0,
     allGoals: [],
     panel: [],
-    searchName: '',
-    filterGrade: '',
-    grades: [
-      'in17',
-      'in18',
-      'in19'
-    ],
-    filterFinished: '',
-    status: [
-      'Nicht Fertig',
-      'Fertig'
-    ]
+    searchName: "",
+    filterGrade: "",
+    grades: ["in17", "in18", "in19"],
+    filterFinished: "",
+    status: ["Nicht Fertig", "Fertig"]
   }),
-  created () {
+  created() {
     if (this.$store.getters.getUser.role !== "Lehrperson") {
-      this.$router.push('/myGoals');
+      this.$router.push("/myGoals");
     }
-    this.init()
-  }, 
+    this.init();
+  },
   methods: {
     //Gets all goals
-    async init () {
-      this.changeDate(0)
-      this.allGoals = await axios.get(`/api/goal/getAll`)
+    async init() {
+      this.changeDate(0);
+      this.allGoals = await axios
+        .get(`/api/goal/getAll`)
         .then(results => results.data)
-        .catch(err => console.log(err))
-      this.loading = false
+        .catch(err => console.log(err));
+      this.loading = false;
     },
     //Changes date of presented goals
-    changeDate (change) {
-      this.panel = []
-      this.deviation += change
-      var today = new Date()
-      var dateChoosen = today.setDate(today.getDate() + this.deviation)
-      this.dateFormatted = this.formatDate(dateChoosen)
+    changeDate(change) {
+      this.panel = [];
+      this.deviation += change;
+      var today = new Date();
+      var dateChoosen = today.setDate(today.getDate() + this.deviation);
+      this.dateFormatted = this.formatDate(dateChoosen);
     },
     //Formats date in presentable format
     formatDate(dateString) {
-      var d = new Date(dateString)
-      var year = d.getFullYear()
-      var month = '' + (d.getMonth() + 1)
-      var day = '' + d.getDate()
+      var d = new Date(dateString);
+      var year = d.getFullYear();
+      var month = "" + (d.getMonth() + 1);
+      var day = "" + d.getDate();
       if (month.length < 2) {
-        month = '0' + month
+        month = "0" + month;
       }
       if (day.length < 2) {
-        day = '0' + day
+        day = "0" + day;
       }
-      return [year, month, day].join('-');
+      return [year, month, day].join("-");
     }
   },
-computed: {
-  //Filters presented goals
-  filteredGoals() {
-    let allFilteredGoals = this.allGoals
-    //Filter for date
-    allFilteredGoals = allFilteredGoals.filter(goal => 
-      goal.date == this.dateFormatted &&
-      goal.userfull.toLowerCase().indexOf(this.searchName.toLowerCase()) > -1
-    );
-    //Grade filter
-    if (this.filterGrade) {
-      allFilteredGoals = allFilteredGoals.filter(goal =>
-        goal.grade == this.filterGrade
-      )
+  computed: {
+    //Filters presented goals
+    filteredGoals() {
+      let allFilteredGoals = this.allGoals;
+      //Filter for date
+      allFilteredGoals = allFilteredGoals.filter(
+        goal =>
+          goal.date == this.dateFormatted &&
+          goal.userfull.toLowerCase().indexOf(this.searchName.toLowerCase()) >
+            -1
+      );
+      //Grade filter
+      if (this.filterGrade) {
+        allFilteredGoals = allFilteredGoals.filter(
+          goal => goal.grade == this.filterGrade
+        );
+      }
+      //Status filter
+      if (this.filterFinished == "Nicht Fertig") {
+        allFilteredGoals = allFilteredGoals.filter(goal => goal.finished == 0);
+      }
+      if (this.filterFinished == "Fertig") {
+        allFilteredGoals = allFilteredGoals.filter(goal => goal.finished == 1);
+      }
+      //returns goals after filtering
+      return allFilteredGoals;
     }
-    //Status filter
-    if (this.filterFinished == "Nicht Fertig") {
-      allFilteredGoals = allFilteredGoals.filter(goal =>
-        goal.finished == 0
-      )
-    }
-    if (this.filterFinished == "Fertig") {
-      allFilteredGoals = allFilteredGoals.filter(goal =>
-        goal.finished == 1
-      )
-    }
-    //returns goals after filtering
-    return allFilteredGoals
   }
-}
 };
 </script>

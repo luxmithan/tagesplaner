@@ -8,57 +8,44 @@
 <template>
   <v-card width="80%">
     <v-toolbar color="primary" dark flat>
-        <v-col>
-          <v-btn text icon @click="changeDate(-1)">
-            <v-icon>mdi-arrow-left-bold</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col>
-          <v-toolbar-title>{{ dateFormatted }}</v-toolbar-title>
-        </v-col>
-        <v-col>
-          <!--Shows if past date-->
-          <v-btn v-if="deviation<0" text icon @click="changeDate(1)">
-            <v-icon>mdi-arrow-right-bold</v-icon>
-          </v-btn>
-        </v-col>
+      <v-col>
+        <v-btn text icon @click="changeDate(-1)">
+          <v-icon>mdi-arrow-left-bold</v-icon>
+        </v-btn>
+      </v-col>
+      <v-col>
+        <v-toolbar-title>{{ dateFormatted }}</v-toolbar-title>
+      </v-col>
+      <v-col>
+        <!--Shows if past date-->
+        <v-btn v-if="deviation<0" text icon @click="changeDate(1)">
+          <v-icon>mdi-arrow-right-bold</v-icon>
+        </v-btn>
+      </v-col>
     </v-toolbar>
     <!--Shows if present date-->
     <div v-if="deviation===0">
       <div class="ma-4 pa-2">
-        <v-btn 
-          v-if="!goalForm" 
-          color="primary" 
-          @click="goalForm=true"
-        >Ziele hinzufügen</v-btn>
+        <v-btn v-if="!goalForm" color="primary" @click="goalForm=true">Ziele hinzufügen</v-btn>
         <!--Form to create goal-->
         <v-form v-else ref="create" class="justify-center">
           <template>
-            <v-text-field 
-              outlined 
-              label="Ziel" 
-              v-model="newGoal.goal" 
+            <v-text-field
+              outlined
+              label="Ziel"
+              v-model="newGoal.goal"
               :rules="goalRules"
               counter="30"
             ></v-text-field>
-            <v-textarea 
-              outlined 
-              label="Beschreibung" 
-              v-model="newGoal.description" 
+            <v-textarea
+              outlined
+              label="Beschreibung"
+              v-model="newGoal.description"
               :rules="descriptionRules"
               counter="2000"
             ></v-textarea>
-            <v-btn 
-              color="error" 
-              class="mr-2" 
-              @click="goalForm=false">
-              Schliessen
-            </v-btn>
-            <v-btn 
-              color="success" 
-              @click="validateCreate">
-              Ziel hinzufügen
-            </v-btn>
+            <v-btn color="error" class="mr-2" @click="goalForm=false">Schliessen</v-btn>
+            <v-btn color="success" @click="validateCreate">Ziel hinzufügen</v-btn>
           </template>
         </v-form>
       </div>
@@ -72,17 +59,18 @@
         :close-on-content-click="false"
         :nudge-width="500"
         :position-x="350"
-        :position-y="200">
+        :position-y="200"
+      >
         <v-card>
           <v-list>
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>
                   <v-text-field
-                    class="mt-1" 
-                    outlined 
-                    label="Ziel" 
-                    v-model="editedGoal.goal" 
+                    class="mt-1"
+                    outlined
+                    label="Ziel"
+                    v-model="editedGoal.goal"
                     :rules="goalRules"
                     counter="30"
                   ></v-text-field>
@@ -97,7 +85,7 @@
                 <v-textarea
                   outlined
                   overflow
-                  label="Beschreibung" 
+                  label="Beschreibung"
                   v-model="editedGoal.description"
                   :rules="descriptionRules"
                   counter="2000"
@@ -112,7 +100,7 @@
                 <v-textarea
                   outlined
                   overflow
-                  label="Was ist gut gelaufen? Warum evtl. nicht fertig geworden?" 
+                  label="Was ist gut gelaufen? Warum evtl. nicht fertig geworden?"
                   v-model="editedGoal.comment"
                   :rules="[ commentRules ]"
                   counter="255"
@@ -122,58 +110,31 @@
           </v-list>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text @click="menu = false">
-              Abbrechen
-            </v-btn>
-            <v-btn color="primary" text @click="validateUpdate()">
-              Speichern
-            </v-btn>
+            <v-btn text @click="menu = false">Abbrechen</v-btn>
+            <v-btn color="primary" text @click="validateUpdate()">Speichern</v-btn>
           </v-card-actions>
         </v-card>
       </v-menu>
     </v-form>
     <!-- Displays filtered goals if exists-->
     <v-expansion-panels v-if="filteredGoals.length" v-model="panel" multiple focusable>
-      <v-expansion-panel
-        v-for="(item, index) in filteredGoals"
-        :key="index"
-      >
+      <v-expansion-panel v-for="(item, index) in filteredGoals" :key="index">
         <v-divider></v-divider>
         <v-expansion-panel-header>
-          <v-col class="text-center ml-4">
-          {{ item.goal }}
-          </v-col>
+          <v-col class="text-center ml-4">{{ item.goal }}</v-col>
         </v-expansion-panel-header>
         <!-- Displays if present day-->
-        <div v-if="deviation===0" class="ma-2" >
-          <v-btn 
-            v-if="item.finished"
-            outlined
-            color="success" 
-            @click="finishGoal(item)">
+        <div v-if="deviation===0" class="ma-2">
+          <v-btn v-if="item.finished" outlined color="success" @click="finishGoal(item)">
             <v-icon>mdi-check</v-icon>
           </v-btn>
-          <v-btn 
-            v-else 
-            outlined
-            color="error" 
-            @click="finishGoal(item)">
+          <v-btn v-else outlined color="error" @click="finishGoal(item)">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-btn 
-            class="ml-2 mr-2" 
-            outlined 
-            color="indigo"
-            dark
-            @click="editGoal(item)">
+          <v-btn class="ml-2 mr-2" outlined color="indigo" dark @click="editGoal(item)">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn  
-            class="mr-2" 
-            outlined 
-            color="error"
-            dark
-            @click="deleteGoal(item)">
+          <v-btn class="mr-2" outlined color="error" dark @click="deleteGoal(item)">
             <v-icon>mdi-trash-can</v-icon>
           </v-btn>
         </div>
@@ -183,170 +144,175 @@
         </div>
         <v-expansion-panel-content @click="menu=false">
           <v-divider></v-divider>
-          <div class="ma-3">
-            {{ item.description }}
-          </div>
-          <v-alert class="mt-2" v-if="item.comment" dense text type="info" width="96%">
-            {{ item.comment }}
-          </v-alert>
+          <div class="ma-3">{{ item.description }}</div>
+          <v-alert
+            class="mt-2"
+            v-if="item.comment"
+            dense
+            text
+            type="info"
+            width="96%"
+          >{{ item.comment }}</v-alert>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-progress-linear
-      v-if="loading"
-      class=" pa-1"
-      indeterminate
-    ></v-progress-linear>
+    <v-progress-linear v-if="loading" class="pa-1" indeterminate></v-progress-linear>
     <!-- If there are no goals-->
     <v-toolbar v-if="!filteredGoals.length && !loading">Keine Einträge gefunden.</v-toolbar>
   </v-card>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 export default {
-  name: 'MyGoals',
+  name: "MyGoals",
   data: () => ({
     loading: true,
-    dateFormatted: '',
+    dateFormatted: "",
     deviation: 0,
-    myId: '',
+    myId: "",
     myGoals: [],
     panel: [],
     menu: false,
-    editedIndex: '',
+    editedIndex: "",
     editedGoal: {},
     goalForm: false,
     newGoal: {
-      goal: '',
-      description: '',
-      date: '',
-      userFK: ''
+      goal: "",
+      description: "",
+      date: "",
+      userFK: ""
     },
     //Validation rules
     goalRules: [
       v => !!v || "Bitte Name des Ziels hinzufügen",
-      v => (v && v.length <= 30) || "Der Name des Ziels darf maximal 30 Zeichen lang sein."
+      v =>
+        (v && v.length <= 30) ||
+        "Der Name des Ziels darf maximal 30 Zeichen lang sein."
     ],
     descriptionRules: [
       v => !!v || "Bitte Beschreibung des Ziels hinzufügen",
-      v => (v && v.length <= 2000) || "Die Beschreibung des Ziels darf maximal 2000 Zeichen lang sein."
+      v =>
+        (v && v.length <= 2000) ||
+        "Die Beschreibung des Ziels darf maximal 2000 Zeichen lang sein."
     ]
   }),
-  created () {
+  created() {
     if (!this.$store.getters.isLoggedIn) {
-      this.$router.push('/login');
+      this.$router.push("/login");
     }
-    this.init()
-  }, 
+    this.init();
+  },
   methods: {
-    commentRules () {
+    commentRules() {
       if (this.editedGoal.comment && this.editedGoal.comment.length >= 255) {
-        return "Der Kommentar des Ziels darf maximal 255 Zeichen lang sein."
-      }
-      else {
-        return true
+        return "Der Kommentar des Ziels darf maximal 255 Zeichen lang sein.";
+      } else {
+        return true;
       }
     },
     //Loads goals of user
-    async init () {
-      this.changeDate(0)
-      this.myId = this.$store.getters.getUser.id
-      this.myGoals = await axios.get(`/api/goal/getForUser/${this.myId}`)
+    async init() {
+      this.changeDate(0);
+      this.myId = this.$store.getters.getUser.id;
+      this.myGoals = await axios
+        .get(`/api/goal/getForUser/${this.myId}`)
         .then(results => results.data)
-        .catch(err => console.log(err))
-      this.loading = false
+        .catch(err => console.log(err));
+      this.loading = false;
       this.newGoal = {
         date: this.dateFormatted,
         userFK: this.myId,
         finished: 0
-      }
+      };
     },
-    //Displays menu to update goal 
-    editGoal (item) {
-      setTimeout(() => this.menu = true, 1)
-      this.editedIndex = this.myGoals.indexOf(item)
+    //Displays menu to update goal
+    editGoal(item) {
+      setTimeout(() => (this.menu = true), 1);
+      this.editedIndex = this.myGoals.indexOf(item);
       this.editedGoal = {
         id: item.id,
         goal: item.goal,
         description: item.description,
         comment: item.comment
-      }
+      };
     },
-    validateCreate () {
+    validateCreate() {
       if (this.$refs.create.validate()) {
-        this.createGoal()
+        this.createGoal();
       }
     },
-    validateUpdate () {
+    validateUpdate() {
       if (this.$refs.update.validate()) {
-        this.updateGoal()
+        this.updateGoal();
       }
     },
     //inserts new goal
-    async createGoal () {
-      this.newGoal.id = await axios.post('/api/goal/create', this.newGoal)
+    async createGoal() {
+      this.newGoal.id = await axios
+        .post("/api/goal/create", this.newGoal)
         .then(results => results.data[0])
-        .catch(err => console.log(err))
-      this.myGoals.push(this.newGoal)
+        .catch(err => console.log(err));
+      this.myGoals.push(this.newGoal);
       this.newGoal = {
         date: this.dateFormatted,
         userFK: this.myId,
         finished: 0
-      }
-      this.$refs.create.resetValidation()
+      };
+      this.$refs.create.resetValidation();
     },
     //Updates goal
-    async updateGoal () {
-      var data = await axios.put('/api/goal/update', this.editedGoal)
+    async updateGoal() {
+      var data = await axios
+        .put("/api/goal/update", this.editedGoal)
         .then(results => results.data)
-        .catch(err => console.log(err))
-      Object.assign(this.myGoals[this.editedIndex], this.editedGoal)
-      this.menu = false
+        .catch(err => console.log(err));
+      Object.assign(this.myGoals[this.editedIndex], this.editedGoal);
+      this.menu = false;
     },
     //Deletes goal entry
-    async deleteGoal (item) {
-      var index = this.myGoals.indexOf(item)
-      this.myGoals.splice(index, 1)
-      axios.delete(`/api/goal/delete/${item.id}`)
+    async deleteGoal(item) {
+      var index = this.myGoals.indexOf(item);
+      this.myGoals.splice(index, 1);
+      axios.delete(`/api/goal/delete/${item.id}`);
     },
     //Changes finished status of goal
-    finishGoal (item) {
-      item.finished = (!item.finished) ? 1 : 0
-      axios.put('/api/goal/update', {id: item.id, finished: item.finished})
+    finishGoal(item) {
+      item.finished = !item.finished ? 1 : 0;
+      axios.put("/api/goal/update", { id: item.id, finished: item.finished });
     },
     //Changes date of presented goals
-    changeDate (change) {
-      this.panel = []
-      this.deviation += change
-      var today = new Date()
-      var dateChoosen = today.setDate(today.getDate() + this.deviation)
-      this.dateFormatted = this.formatDate(dateChoosen)
+    changeDate(change) {
+      this.panel = [];
+      this.deviation += change;
+      var today = new Date();
+      var dateChoosen = today.setDate(today.getDate() + this.deviation);
+      this.dateFormatted = this.formatDate(dateChoosen);
     },
     //Formats date in presentable format
     formatDate(dateString) {
-      var d = new Date(dateString)
-      var year = d.getFullYear()
-      var month = '' + (d.getMonth() + 1)
-      var day = '' + d.getDate()
+      var d = new Date(dateString);
+      var year = d.getFullYear();
+      var month = "" + (d.getMonth() + 1);
+      var day = "" + d.getDate();
       if (month.length < 2) {
-        month = '0' + month
+        month = "0" + month;
       }
       if (day.length < 2) {
-        day = '0' + day
+        day = "0" + day;
       }
-      return [year, month, day].join('-');
+      return [year, month, day].join("-");
     }
   },
   computed: {
     //Filters presented goals
     filteredGoals() {
-      let myFilteredGoals = this.myGoals
+      let myFilteredGoals = this.myGoals;
       //Filters goals to accommodate dateFormatted
-      myFilteredGoals = myFilteredGoals.filter(goal => 
-        goal.date == this.dateFormatted
-      )
-      return myFilteredGoals
+      myFilteredGoals = myFilteredGoals.filter(
+        goal => goal.date == this.dateFormatted
+      );
+      return myFilteredGoals;
     }
   }
 };
