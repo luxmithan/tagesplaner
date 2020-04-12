@@ -5,16 +5,16 @@
  * Description: Vuex store Configurations
  */
 
-import Vue from "vue";
-import Vuex from "vuex";
-import Axios from "axios";
-import createPersistedState from "vuex-persistedstate";
+import Vue from 'vue';
+import Vuex from 'vuex';
+import Axios from 'axios';
+import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 let getDefaultState = () => {
   return {
-    token: "",
-    user: {},
+    token: '',
+    user: {}
   };
 };
 
@@ -23,12 +23,12 @@ export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: getDefaultState(),
   getters: {
-    isLoggedIn: (state) => {
+    isLoggedIn: state => {
       return state.token;
     },
-    getUser: (state) => {
+    getUser: state => {
       return state.user;
-    },
+    }
   },
   mutations: {
     setToken: (state, token) => {
@@ -37,21 +37,21 @@ export default new Vuex.Store({
     setUser: (state, user) => {
       state.user = user;
     },
-    reset: (state) => {
+    reset: state => {
       Object.assign(state, getDefaultState());
-    },
+    }
   },
   actions: {
     //Saves Token into local storage and into axios header
     login: ({ commit }, { token, user }) => {
-      commit("setToken", token);
-      commit("setUser", user);
-      Axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      commit('setToken', token);
+      commit('setUser', user);
+      Axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     },
     //Deletes token from local storage and header
     logout: ({ commit }) => {
-      commit("reset", "");
-      Axios.defaults.headers.common["Authorization"] = "";
-    },
-  },
+      commit('reset', '');
+      Axios.defaults.headers.common['Authorization'] = '';
+    }
+  }
 });

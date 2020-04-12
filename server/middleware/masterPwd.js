@@ -5,30 +5,30 @@
  * Description: Middleware to check if master password is correct
  */
 
-const BCRYPT = require("bcryptjs");
+const BCRYPT = require('bcryptjs');
 
 module.exports = (req, res, next) => {
   try {
-    if (req.body.role == "Lernende/r") {
+    if (req.body.role == 'Lernende/r') {
       next();
     } else {
       // The masterpassword is stored here
       const MASTERPASSWORD =
-        "$2y$10$mNWaDZCXyrpwselN6ZLmKeii6gEQjj/HKt0BiMqgYEFTVnnDN/5jm";
+        '$2y$10$mNWaDZCXyrpwselN6ZLmKeii6gEQjj/HKt0BiMqgYEFTVnnDN/5jm';
       BCRYPT.compare(
         req.body.masterPassword,
         MASTERPASSWORD,
         async (bErr, bResult) => {
           if (bErr) {
             return res.status(401).send({
-              msg: "Falsche Eingabe",
+              msg: 'Falsche Eingabe'
             });
           }
           if (bResult) {
             next();
           } else {
             return res.status(401).send({
-              msg: "Falsches Masterpasswort.",
+              msg: 'Falsches Masterpasswort.'
             });
           }
         }
@@ -36,7 +36,7 @@ module.exports = (req, res, next) => {
     }
   } catch (err) {
     return res.status(401).send({
-      msg: "Falsche Eingabe",
+      msg: 'Falsche Eingabe'
     });
   }
 };
