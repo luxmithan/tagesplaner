@@ -10,7 +10,7 @@ const FALLBACK = require('express-history-api-fallback');
 const MORGAN = require('morgan');
 const KNEX = require('./config/knexConfig');
 //PORT can be defined by an external web host but is 80 by default
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 81;
 const APP = EXPRESS();
 
 //Logs with essential information are created through morgan
@@ -31,7 +31,7 @@ APP.use(EXPRESS.static(root));
 APP.use(FALLBACK('index.html', { root }));
 
 //Shows in CMD if app is running
-APP.listen(PORT, console.log('Tagesplaner is running on port ' + PORT));
+APP.listen(PORT, console.log('Tagesplaner is running on port ', PORT));
 
 //Shows in CMD if database connection is available
 KNEX.raw('SELECT VERSION();')
@@ -39,5 +39,5 @@ KNEX.raw('SELECT VERSION();')
     console.log('Database connection has been successfully established');
   })
   .catch(function (err) {
-    console.error('\n', 'Database connection failed', '\n', err.stack);
+    console.error('\nDatabase connection failed\n', err.stack);
   });
