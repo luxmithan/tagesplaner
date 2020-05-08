@@ -1,5 +1,7 @@
 # Tagesplaner
 
+A webapp to set daily goals
+
 ## Development mode
 ```bash
 cd ./tagesplaner/client
