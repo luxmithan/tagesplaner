@@ -114,7 +114,7 @@ export default {
     async init() {
       this.changeDate(0);
       this.allGoals = await axios
-        .get(`/api/goal/getAll`)
+        .get(`/api/goals`)
         .then(results => results.data)
         .catch(err => console.log(err));
       this.loading = false;

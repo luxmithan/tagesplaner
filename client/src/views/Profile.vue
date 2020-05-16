@@ -4,7 +4,7 @@
  * Version:     1.0
  * Description: Page for user configurations
  -->
- 
+
 <template>
   <v-col cols="12" sm="8" md="6">
     <v-card>
@@ -130,7 +130,7 @@ export default {
           newPasswordRepeat: this.newPasswordRepeat
         };
         let data = await axios
-          .put(`/api/user/changePassword`, passwordData)
+          .put(`/api/users`, passwordData)
           .then(response => response.data);
         this.$refs.form.reset();
         this.success = true;

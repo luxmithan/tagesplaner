@@ -17,7 +17,7 @@ const JWT = require('jsonwebtoken');
 const USER = EXPRESS.Router();
 
 //Creates new user in DB
-USER.post('/user/register', MASTERPWD, async (req, res) => {
+USER.post('/', MASTERPWD, async (req, res) => {
   //Checks if username already exists and gives error if true
   let results = await KNEX('user').where('username', req.body.username);
   if (results.length) {
@@ -46,7 +46,7 @@ USER.post('/user/register', MASTERPWD, async (req, res) => {
 });
 
 //Login and creates Authentication Token
-USER.post('/user/login', async (req, res) => {
+USER.post('/login', async (req, res) => {
   //Checks if user really exists
   let results = await KNEX('user').where('username', req.body.username);
   if (!results.length) {
@@ -84,7 +84,7 @@ USER.post('/user/login', async (req, res) => {
 });
 
 //Changes password of logged in user
-USER.put('/user/changePassword', JWTAUTH, async (req, res) => {
+USER.put('/', JWTAUTH, async (req, res) => {
   let user = await KNEX('user')
     .where('id', req.body.id)
     .then((data) => data[0]);
@@ -110,7 +110,7 @@ USER.put('/user/changePassword', JWTAUTH, async (req, res) => {
 });
 
 //Deletes logged in user
-USER.delete('/user/delete/:id', JWTAUTH, async (req, res) => {
+USER.delete('/:id', JWTAUTH, async (req, res) => {
   try {
     let results = await KNEX('user').where('id', req.params.id).del();
     res.json(results);

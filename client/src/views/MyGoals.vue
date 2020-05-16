@@ -216,7 +216,7 @@ export default {
       this.changeDate(0);
       this.myId = this.$store.getters.getUser.id;
       this.myGoals = await axios
-        .get(`/api/goal/getForUser/${this.myId}`)
+        .get(`/api/goals/${this.myId}`)
         .then(results => results.data)
         .catch(err => console.log(err));
       this.loading = false;
@@ -250,7 +250,7 @@ export default {
     //inserts new goal
     async createGoal() {
       this.newGoal.id = await axios
-        .post("/api/goal/create", this.newGoal)
+        .post("/api/goals", this.newGoal)
         .then(results => results.data[0])
         .catch(err => console.log(err));
       this.myGoals.push(this.newGoal);
@@ -264,7 +264,7 @@ export default {
     //Updates goal
     async updateGoal() {
       var data = await axios
-        .put("/api/goal/update", this.editedGoal)
+        .put("/api/goals", this.editedGoal)
         .then(results => results.data)
         .catch(err => console.log(err));
       Object.assign(this.myGoals[this.editedIndex], this.editedGoal);
@@ -274,12 +274,12 @@ export default {
     async deleteGoal(item) {
       var index = this.myGoals.indexOf(item);
       this.myGoals.splice(index, 1);
-      axios.delete(`/api/goal/delete/${item.id}`);
+      axios.delete(`/api/goals/${item.id}`);
     },
     //Changes finished status of goal
     finishGoal(item) {
       item.finished = !item.finished ? 1 : 0;
-      axios.put("/api/goal/update", { id: item.id, finished: item.finished });
+      axios.put("/api/goals", { id: item.id, finished: item.finished });
     },
     //Changes date of presented goals
     changeDate(change) {

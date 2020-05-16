@@ -66,7 +66,7 @@ export default {
     async login() {
       try {
         let data = await axios
-          .post("/api/user/login", this.loginData)
+          .post("/api/users/login", this.loginData)
           .then(response => response.data);
         let token = data.token;
         let user = data.user;

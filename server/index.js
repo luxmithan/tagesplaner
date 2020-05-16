@@ -10,7 +10,7 @@ const FALLBACK = require('express-history-api-fallback');
 const MORGAN = require('morgan');
 const KNEX = require('./config/knexConfig');
 //PORT can be defined by an external web host but is 80 by default
-const PORT = process.env.PORT || 81;
+const PORT = process.env.PORT || 80;
 const APP = EXPRESS();
 
 //Logs with essential information are created through morgan
@@ -22,8 +22,8 @@ APP.use(MORGAN(':method :url :body :status'));
 APP.use(EXPRESS.json());
 
 //Uses Endpoints from both files
-APP.use('/api', require('./routes/user'));
-APP.use('/api', require('./routes/goal'));
+APP.use('/api/users', require('./routes/user'));
+APP.use('/api/goals', require('./routes/goal'));
 
 //Defines root folder for webapp build
 let root = `${__dirname}/../client/dist`;

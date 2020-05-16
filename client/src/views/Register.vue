@@ -167,7 +167,7 @@ export default {
       }
       try {
         let response = await axios
-          .post("/api/user/register", this.signupData)
+          .post("/api/users", this.signupData)
           .then(response => response.data);
         this.errorMsg = response.msg;
         this.$router.push("/login");

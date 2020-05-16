@@ -14,7 +14,7 @@ const JWTAUTH = require('../middleware/jwtAuth');
 const GOAL = EXPRESS.Router();
 
 //Creates goal and inserts it into DB
-GOAL.post('/goal/create', JWTAUTH, async (req, res) => {
+GOAL.post('/', JWTAUTH, async (req, res) => {
   let goal = req.body.goal;
   let description = req.body.description;
   let userFK = req.body.userFK;
@@ -27,7 +27,7 @@ GOAL.post('/goal/create', JWTAUTH, async (req, res) => {
 });
 
 //Selects goals of logged in user
-GOAL.get('/goal/getForUser/:userFK', JWTAUTH, async (req, res) => {
+GOAL.get('/:userFK', JWTAUTH, async (req, res) => {
   try {
     let results = await KNEX('daygoal').where('userFK', req.params.userFK);
     res.json(results);
@@ -37,7 +37,7 @@ GOAL.get('/goal/getForUser/:userFK', JWTAUTH, async (req, res) => {
 });
 
 //Selects the created view from DB
-GOAL.get('/goal/getAll', JWTAUTH, async (req, res) => {
+GOAL.get('/', JWTAUTH, async (req, res) => {
   try {
     let results = await KNEX('daygoals');
     res.json(results);
@@ -47,7 +47,7 @@ GOAL.get('/goal/getAll', JWTAUTH, async (req, res) => {
 });
 
 //Updates an existing goal on its values
-GOAL.put('/goal/update', JWTAUTH, async (req, res) => {
+GOAL.put('/', JWTAUTH, async (req, res) => {
   let id = req.body.id;
   let goal = req.body.goal;
   let description = req.body.description;
@@ -64,7 +64,7 @@ GOAL.put('/goal/update', JWTAUTH, async (req, res) => {
 });
 
 //Deletes goal entry from DB
-GOAL.delete('/goal/delete/:id', JWTAUTH, async (req, res) => {
+GOAL.delete('/:id', JWTAUTH, async (req, res) => {
   try {
     let results = await KNEX('daygoal').where('id', req.params.id).del();
     res.json(results);
