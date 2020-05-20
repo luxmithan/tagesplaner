@@ -84,97 +84,102 @@
     </v-card>
   </v-col>
 </template>
-<script>
-import axios from "axios";
-export default {
-  data: () => ({
-    signupData: {
-      username: "",
-      firstname: "",
-      lastname: "",
-      role: "",
-      grade: null,
-      masterPassword: null,
-      password: "",
-      passwordRepeat: ""
-    },
-    errorMsg: "",
-    roles: ["Lernende/r", "Lehrperson"],
-    grades: ["in17", "in18", "in19"],
-    //Validation rules
-    generalRules: [v => !!v || "Bitte Feld ausfüllen"],
-    usernameRules: [
-      v => !!v || "Bitte Feld ausfüllen",
-      v =>
-        (v && v.length <= 12) ||
-        "Der Username darf maximal 12 Zeichen lang sein",
-      v =>
-        (v && v.length >= 3) || "Der Username muss minimal 3 Zeichen lang sein"
-    ],
-    passwordRules: [
-      v => !!v || "Bitte Feld ausfüllen",
-      v =>
-        (v && v.length <= 20) ||
-        "Das Passwort darf maximal 20 Zeichen lang sein",
-      v =>
-        (v && v.length >= 6) || "Das Passwort muss minimal 6 Zeichen lang sein"
-    ]
-  }),
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import axios from 'axios';
+
+@Component
+export default class Register extends Vue {
+  private signupData = {
+    username: '',
+    firstname: '',
+    lastname: '',
+    role: '',
+    grade: null,
+    masterPassword: null,
+    password: '',
+    passwordRepeat: '',
+  };
+
+  private errorMsg = '';
+
+  private roles = ['Lernende/r', 'Lehrperson'];
+
+  private grades = ['in17', 'in18', 'in19'];
+
+  // Validation rules
+  private generalRules = [(v: string) => !!v || 'Bitte Feld ausfüllen'];
+
+  private usernameRules = [
+    (v: string) => !!v || 'Bitte Feld ausfüllen',
+    (v: string) => (v && v.length <= 12)
+      || 'Der Username darf maximal 12 Zeichen lang sein',
+    (v: string) => (v && v.length >= 3) || 'Der Username muss minimal 3 Zeichen lang sein',
+  ];
+
+  private passwordRules = [
+    (v: string) => !!v || 'Bitte Feld ausfüllen',
+    (v: string) => (v && v.length <= 20)
+      || 'Das Passwort darf maximal 20 Zeichen lang sein',
+    (v: string) => (v && v.length >= 6) || 'Das Passwort muss minimal 6 Zeichen lang sein',
+  ];
+
   created() {
     if (this.$store.getters.isLoggedIn) {
-      this.$router.push("/myGoals");
-    }
-  },
-  methods: {
-    masterRules() {
-      if (
-        this.signupData.role != "Lernende/r" &&
-        !this.signupData.masterPassword
-      ) {
-        return "Bitte Feld ausfüllen";
-      } else {
-        return true;
-      }
-    },
-    gradeRules() {
-      if (this.signupData.role != "Lehrperson" && !this.signupData.grade) {
-        return "Bitte Feld ausfüllen";
-      } else {
-        return true;
-      }
-    },
-    passwordRepeatRules() {
-      if (!this.signupData.passwordRepeat) {
-        return "Bitte Feld ausfüllen";
-      } else if (this.signupData.password !== this.signupData.passwordRepeat) {
-        return "Die Beiden Passwörter stimmen nicht überein";
-      } else {
-        return true;
-      }
-    },
-    validate() {
-      if (this.$refs.form.validate()) {
-        this.signUp();
-      }
-    },
-    //Function to sign up new user
-    async signUp() {
-      if (this.role == "Lehrperson") {
-        this.grade = null;
-      }
-      if (this.role == "Lernende/r") {
-        this.masterPassword = null;
-      }
-      try {
-        let response = await axios
-          .post("/api/users", this.signupData)
-          .then(response => response.data);
-        this.errorMsg = response.msg;
-        this.$router.push("/login");
-      } catch (error) {
-        this.errorMsg = error.response.data.msg;
-      }
+      this.$router.push('/myGoals');
     }
   }
-};
+
+  masterRules() {
+    if (
+      this.signupData.role !== 'Lernende/r'
+      && !this.signupData.masterPassword
+    ) {
+      return 'Bitte Feld ausfüllen';
+    }
+    return true;
+  }
+
+  gradeRules() {
+    if (this.signupData.role !== 'Lehrperson' && !this.signupData.grade) {
+      return 'Bitte Feld ausfüllen';
+    }
+    return true;
+  }
+
+  passwordRepeatRules() {
+    if (!this.signupData.passwordRepeat) {
+      return 'Bitte Feld ausfüllen';
+    } if (this.signupData.password !== this.signupData.passwordRepeat) {
+      return 'Die Beiden Passwörter stimmen nicht überein';
+    }
+    return true;
+  }
+
+  validate() {
+    if ((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
+      this.signUp();
+    }
+  }
+
+  // Function to sign up new user
+  async signUp() {
+    if (this.signupData.role === 'Lehrperson') {
+      this.signupData.grade = null;
+    }
+    if (this.signupData.role === 'Lernende/r') {
+      this.signupData.masterPassword = null;
+    }
+    try {
+      const response = await axios
+        .post('/api/users', this.signupData)
+        .then((results) => results.data);
+      this.errorMsg = response.msg;
+      this.$router.push('/login');
+    } catch (error) {
+      this.errorMsg = error.response.data.msg;
+    }
+  }
+}
 </script>

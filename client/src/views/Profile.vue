@@ -62,96 +62,107 @@
     </v-card>
   </v-col>
 </template>
-<script>
-import axios from "axios";
-export default {
-  name: "Profil",
-  data: () => ({
-    myId: "",
-    myProfile: {
-      Username: "",
-      Vorname: "",
-      Nachname: "",
-      Rolle: ""
-    },
-    oldPassword: "",
-    newPassword: "",
-    newPasswordRepeat: "",
-    errorMsg: "",
-    success: false,
-    oldPasswordRules: [v => !!v || "Bitte altes Password eingeben"],
-    newPasswordRules: [
-      v => !!v || "Bitte neues Passwort eingeben",
-      v =>
-        (v && v.length <= 20) ||
-        "Das Passwort darf maximal 20 Zeichen lang sein",
-      v =>
-        (v && v.length >= 6) || "Das Passwort muss minimal 6 Zeichen lang sein"
-    ]
-  }),
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import axios from 'axios';
+
+@Component
+export default class Profile extends Vue {
+  private myId = '';
+
+  private myProfile = {
+    Username: '',
+    Vorname: '',
+    Nachname: '',
+    Rolle: '',
+  }
+
+  private oldPassword = '';
+
+  private newPassword = '';
+
+  private newPasswordRepeat = '';
+
+  private errorMsg: string | boolean = '';
+
+  private success = false;
+
+  private oldPasswordRules = [(v: string) => !!v || 'Bitte altes Password eingeben'];
+
+  private newPasswordRules = [
+    (v: string) => !!v || 'Bitte neues Passwort eingeben',
+    (v: string) => (v && v.length <= 20)
+    || 'Das Passwort darf maximal 20 Zeichen lang sein',
+    (v: string) => (v && v.length >= 6)
+    || 'Das Passwort muss minimal 6 Zeichen lang sein',
+  ]
+
   created() {
     if (!this.$store.getters.isLoggedIn) {
-      this.$router.push("/login");
+      this.$router.push('/login');
     }
     this.init();
-  },
-  methods: {
-    init() {
-      this.myId = this.$store.getters.getUser.id;
-      this.myProfile = {
-        Username: this.$store.getters.getUser.username,
-        Vorname: this.$store.getters.getUser.firstname,
-        Nachname: this.$store.getters.getUser.lastname,
-        Rolle: this.$store.getters.getUser.role
-      };
-    },
-    newPasswordRepeatRules() {
-      if (!this.newPasswordRepeat) {
-        return "Bitte neues Passwort erneut eingeben";
-      }
-      if (this.newPassword !== this.newPasswordRepeat) {
-        return "Die neuen Passwörter stimmen nicht überein";
-      } else {
-        return true;
-      }
-    },
-    validate() {
-      if (this.$refs.form.validate()) {
-        this.changePassword();
-      }
-    },
-    //Function to update passwords
-    async changePassword() {
-      try {
-        let passwordData = {
-          id: this.myId,
-          password: this.oldPassword,
-          newPassword: this.newPassword,
-          newPasswordRepeat: this.newPasswordRepeat
-        };
-        let data = await axios
-          .put(`/api/users`, passwordData)
-          .then(response => response.data);
-        this.$refs.form.reset();
-        this.success = true;
-        setTimeout(() => (this.success = false), 3000);
-      } catch (error) {
-        this.errorMsg = error.response.data.msg;
-        setTimeout(() => (this.errorMsg = false), 3000);
-      }
-    },
-    //Function to delete logged in user
-    async deleteUser() {
-      if (
-        confirm(
-          "Sind Sie sicher, dass Sie ihr Konto inklusive alle dazugehörigen Ziele löschen wollen?"
-        )
-      ) {
-        axios.delete(`/api/user/delete/${this.myId}`);
-        this.$store.dispatch("logout");
-        this.$router.push("/login");
-      }
+  }
+
+  public init(): void {
+    ({
+      id: this.myId,
+      username: this.myProfile.Username,
+      firstname: this.myProfile.Vorname,
+      lastname: this.myProfile.Nachname,
+      role: this.myProfile.Rolle,
+    } = this.$store.getters.getUser);
+  }
+
+  public newPasswordRepeatRules(): boolean | string {
+    if (!this.newPasswordRepeat) {
+      return 'Bitte neues Passwort erneut eingeben';
+    }
+    if (this.newPassword !== this.newPasswordRepeat) {
+      return 'Die neuen Passwörter stimmen nicht überein';
+    }
+    return true;
+  }
+
+  public validate(): void {
+    if ((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
+      this.changePassword();
     }
   }
-};
+
+  // Function to update passwords
+  public async changePassword(): Promise<void> {
+    try {
+      const passwordData = {
+        id: this.myId,
+        password: this.oldPassword,
+        newPassword: this.newPassword,
+        newPasswordRepeat: this.newPasswordRepeat,
+      };
+      axios.put('/api/users', passwordData)
+        .then(response => response.data);
+      (this.$refs.form as Vue & { reset: () => void }).reset();
+      this.success = true;
+      setTimeout(() => { this.success = false; }, 3000);
+    } catch (error) {
+      this.errorMsg = error.response.data.msg;
+      setTimeout(() => { this.errorMsg = false; }, 3000);
+    }
+  }
+
+  // Function to delete logged in user
+  public async deleteUser(): Promise<void> {
+    if (
+      // eslint-disable-next-line
+      window.confirm(
+        'Sind Sie sicher, dass Sie ihr Konto inklusive alle dazugehörigen Ziele löschen wollen?',
+      )
+    ) {
+      axios.delete(`/api/user/delete/${this.myId}`);
+      this.$store.dispatch('logout');
+      this.$router.push('/login');
+    }
+  }
+}
 </script>

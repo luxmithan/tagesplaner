@@ -87,88 +87,93 @@
   </v-card>
 </template>
 
-<script>
-import axios from "axios";
-export default {
-  name: "AllGoals",
-  data: () => ({
-    loading: true,
-    dateFormatted: "",
-    deviation: 0,
-    allGoals: [],
-    panel: [],
-    searchName: "",
-    filterGrade: "",
-    grades: ["in17", "in18", "in19"],
-    filterFinished: "",
-    status: ["Nicht Fertig", "Fertig"]
-  }),
-  created() {
-    if (this.$store.getters.getUser.role !== "Lehrperson") {
-      this.$router.push("/myGoals");
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import axios from 'axios';
+
+import { formatDate, GoalParent } from './goalFuncs';
+
+interface Goal extends GoalParent {
+  id: number;
+  comment: string | null;
+  date: string;
+  userFK: number;
+  finished: number;
+  userfull: string;
+  grade: string | null;
+}
+
+@Component
+export default class AllGoals extends Vue {
+  private loading = true;
+
+  private dateFormatted = '';
+
+  private deviation = 0;
+
+  private allGoals = [];
+
+  private panel?: number[];
+
+  private searchName = '';
+
+  private filterGrade = '';
+
+  private filterFinished = '';
+
+  private grades: string[] = ['in17', 'in18', 'in19'];
+
+  private status = ['Nicht Fertig', 'Fertig'];
+
+  // Gets all goals
+  public async init(): Promise<void> {
+    this.changeDate(0);
+    this.allGoals = await axios
+      .get('/api/goals')
+      .then((results) => results.data)
+      .catch((err) => console.log(err));
+    this.loading = false;
+  }
+
+  // Changes date of presented goals
+  changeDate(change: number): void {
+    this.panel = [];
+    this.deviation += change;
+    const today: Date = new Date();
+    const dateChoosen: number = today.setDate(today.getDate() + this.deviation);
+    this.dateFormatted = formatDate(dateChoosen);
+  }
+
+  created(): void {
+    if (this.$store.getters.getUser.role !== 'Lehrperson') {
+      this.$router.push('/myGoals');
     }
     this.init();
-  },
-  methods: {
-    //Gets all goals
-    async init() {
-      this.changeDate(0);
-      this.allGoals = await axios
-        .get(`/api/goals`)
-        .then(results => results.data)
-        .catch(err => console.log(err));
-      this.loading = false;
-    },
-    //Changes date of presented goals
-    changeDate(change) {
-      this.panel = [];
-      this.deviation += change;
-      var today = new Date();
-      var dateChoosen = today.setDate(today.getDate() + this.deviation);
-      this.dateFormatted = this.formatDate(dateChoosen);
-    },
-    //Formats date in presentable format
-    formatDate(dateString) {
-      var d = new Date(dateString);
-      var year = d.getFullYear();
-      var month = "" + (d.getMonth() + 1);
-      var day = "" + d.getDate();
-      if (month.length < 2) {
-        month = "0" + month;
-      }
-      if (day.length < 2) {
-        day = "0" + day;
-      }
-      return [year, month, day].join("-");
-    }
-  },
-  computed: {
-    //Filters presented goals
-    filteredGoals() {
-      let allFilteredGoals = this.allGoals;
-      //Filter for date
-      allFilteredGoals = allFilteredGoals.filter(
-        goal =>
-          goal.date == this.dateFormatted &&
-          goal.userfull.toLowerCase().indexOf(this.searchName.toLowerCase()) >
-            -1
-      );
-      //Grade filter
-      if (this.filterGrade) {
-        allFilteredGoals = allFilteredGoals.filter(
-          goal => goal.grade == this.filterGrade
-        );
-      }
-      //Status filter
-      if (this.filterFinished == "Nicht Fertig") {
-        allFilteredGoals = allFilteredGoals.filter(goal => goal.finished == 0);
-      }
-      if (this.filterFinished == "Fertig") {
-        allFilteredGoals = allFilteredGoals.filter(goal => goal.finished == 1);
-      }
-      //returns goals after filtering
-      return allFilteredGoals;
-    }
   }
-};
+
+  // Filters presented goals
+  get filteredGoals(): Goal[] {
+    let allFilteredGoals: Goal[] = this.allGoals;
+    // Filter for date
+    allFilteredGoals = allFilteredGoals.filter(
+      (goal: Goal) => goal.date === this.dateFormatted
+        && goal.userfull.toLowerCase().indexOf(this.searchName.toLowerCase())
+          > -1,
+    );
+    // Grade filter
+    if (this.filterGrade) {
+      allFilteredGoals = allFilteredGoals.filter(
+        (goal: Goal) => goal.grade === this.filterGrade,
+      );
+    }
+    // Status filter
+    if (this.filterFinished) {
+      allFilteredGoals = allFilteredGoals.filter(
+        (goal: Goal) => goal.finished === this.status.indexOf(this.filterFinished),
+      );
+    }
+    // returns goals after filtering
+    return allFilteredGoals;
+  }
+}
 </script>

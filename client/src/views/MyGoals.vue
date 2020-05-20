@@ -162,158 +162,170 @@
   </v-card>
 </template>
 
-<script>
-import axios from "axios";
-export default {
-  name: "MyGoals",
-  data: () => ({
-    loading: true,
-    dateFormatted: "",
-    deviation: 0,
-    myId: "",
-    myGoals: [],
-    panel: [],
-    menu: false,
-    editedIndex: "",
-    editedGoal: {},
-    goalForm: false,
-    newGoal: {
-      goal: "",
-      description: "",
-      date: "",
-      userFK: ""
-    },
-    //Validation rules
-    goalRules: [
-      v => !!v || "Bitte Name des Ziels hinzufügen",
-      v =>
-        (v && v.length <= 30) ||
-        "Der Name des Ziels darf maximal 30 Zeichen lang sein."
-    ],
-    descriptionRules: [
-      v => !!v || "Bitte Beschreibung des Ziels hinzufügen",
-      v =>
-        (v && v.length <= 2000) ||
-        "Die Beschreibung des Ziels darf maximal 2000 Zeichen lang sein."
-    ]
-  }),
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import axios from 'axios';
+
+import { formatDate, GoalParent as Goal } from './goalFuncs';
+
+@Component
+export default class MyGoals extends Vue {
+  private loading = true;
+
+  private dateFormatted = '';
+
+  private deviation = 0;
+
+  private myId = 0;
+
+  private myGoals: Goal[] = [];
+
+  private panel?: number[];
+
+  private menu = false;
+
+  private editedIndex = 0;
+
+  private editedGoal: Goal = {
+    goal: '',
+    description: '',
+    comment: '',
+  };
+
+  private goalForm = false;
+
+  private newGoal: Goal = {
+    goal: '',
+    description: '',
+  }
+
+  // Validation rules
+  private goalRules = [
+    (v: string) => !!v || 'Bitte Name des Ziels hinzufügen',
+    (v: string) => (v && v.length <= 30)
+      || 'Der Name des Ziels darf maximal 30 Zeichen lang sein.',
+  ]
+
+  private descriptionRules = [
+    (v: string) => !!v || 'Bitte Beschreibung des Ziels hinzufügen',
+    (v: string) => (v && v.length <= 2000)
+      || 'Die Beschreibung des Ziels darf maximal 2000 Zeichen lang sein.',
+  ]
+
   created() {
     if (!this.$store.getters.isLoggedIn) {
-      this.$router.push("/login");
+      this.$router.push('/login');
     }
     this.init();
-  },
-  methods: {
-    commentRules() {
-      if (this.editedGoal.comment && this.editedGoal.comment.length >= 255) {
-        return "Der Kommentar des Ziels darf maximal 255 Zeichen lang sein.";
-      } else {
-        return true;
-      }
-    },
-    //Loads goals of user
-    async init() {
-      this.changeDate(0);
-      this.myId = this.$store.getters.getUser.id;
-      this.myGoals = await axios
-        .get(`/api/goals/${this.myId}`)
-        .then(results => results.data)
-        .catch(err => console.log(err));
-      this.loading = false;
-      this.newGoal = {
-        date: this.dateFormatted,
-        userFK: this.myId,
-        finished: 0
-      };
-    },
-    //Displays menu to update goal
-    editGoal(item) {
-      setTimeout(() => (this.menu = true), 1);
-      this.editedIndex = this.myGoals.indexOf(item);
-      this.editedGoal = {
-        id: item.id,
-        goal: item.goal,
-        description: item.description,
-        comment: item.comment
-      };
-    },
-    validateCreate() {
-      if (this.$refs.create.validate()) {
-        this.createGoal();
-      }
-    },
-    validateUpdate() {
-      if (this.$refs.update.validate()) {
-        this.updateGoal();
-      }
-    },
-    //inserts new goal
-    async createGoal() {
-      this.newGoal.id = await axios
-        .post("/api/goals", this.newGoal)
-        .then(results => results.data[0])
-        .catch(err => console.log(err));
-      this.myGoals.push(this.newGoal);
-      this.newGoal = {
-        date: this.dateFormatted,
-        userFK: this.myId,
-        finished: 0
-      };
-      this.$refs.create.resetValidation();
-    },
-    //Updates goal
-    async updateGoal() {
-      var data = await axios
-        .put("/api/goals", this.editedGoal)
-        .then(results => results.data)
-        .catch(err => console.log(err));
-      Object.assign(this.myGoals[this.editedIndex], this.editedGoal);
-      this.menu = false;
-    },
-    //Deletes goal entry
-    async deleteGoal(item) {
-      var index = this.myGoals.indexOf(item);
-      this.myGoals.splice(index, 1);
-      axios.delete(`/api/goals/${item.id}`);
-    },
-    //Changes finished status of goal
-    finishGoal(item) {
-      item.finished = !item.finished ? 1 : 0;
-      axios.put("/api/goals", { id: item.id, finished: item.finished });
-    },
-    //Changes date of presented goals
-    changeDate(change) {
-      this.panel = [];
-      this.deviation += change;
-      var today = new Date();
-      var dateChoosen = today.setDate(today.getDate() + this.deviation);
-      this.dateFormatted = this.formatDate(dateChoosen);
-    },
-    //Formats date in presentable format
-    formatDate(dateString) {
-      var d = new Date(dateString);
-      var year = d.getFullYear();
-      var month = "" + (d.getMonth() + 1);
-      var day = "" + d.getDate();
-      if (month.length < 2) {
-        month = "0" + month;
-      }
-      if (day.length < 2) {
-        day = "0" + day;
-      }
-      return [year, month, day].join("-");
+  }
+
+  public commentRules(): boolean | string {
+    if (this.editedGoal.comment && this.editedGoal.comment.length >= 255) {
+      return 'Der Kommentar des Ziels darf maximal 255 Zeichen lang sein.';
     }
-  },
-  computed: {
-    //Filters presented goals
-    filteredGoals() {
-      let myFilteredGoals = this.myGoals;
-      //Filters goals to accommodate dateFormatted
-      myFilteredGoals = myFilteredGoals.filter(
-        goal => goal.date == this.dateFormatted
-      );
-      return myFilteredGoals;
+    return true;
+  }
+
+  // Loads goals of user
+  public async init(): Promise<void> {
+    this.changeDate(0);
+    this.myId = this.$store.getters.getUser.id;
+    this.myGoals = await axios
+      .get(`/api/goals/${this.myId}`)
+      .then(results => results.data)
+      .catch(err => console.log(err));
+    this.loading = false;
+    this.newGoal = {
+      goal: '',
+      description: '',
+      date: this.dateFormatted,
+      userFK: this.myId,
+    };
+  }
+
+  // Displays menu to update goal
+  public editGoal(item: Goal): void {
+    setTimeout(() => {
+      this.menu = true;
+    }, 1);
+    this.editedIndex = this.myGoals.indexOf(item);
+    this.editedGoal = {
+      id: item.id,
+      goal: item.goal,
+      description: item.description,
+      comment: item.comment,
+    };
+  }
+
+  public validateCreate(): void {
+    if ((this.$refs.create as Vue & { validate: () => boolean }).validate()) {
+      this.createGoal();
     }
   }
-};
+
+  public validateUpdate(): void {
+    if ((this.$refs.update as Vue & { validate: () => boolean }).validate()) {
+      this.updateGoal();
+    }
+  }
+
+  // inserts new goal
+  public async createGoal(): Promise<void> {
+    this.newGoal.id = await axios
+      .post('/api/goals', this.newGoal)
+      .then(results => results.data[0])
+      .catch(err => console.log(err));
+    this.myGoals.push(this.newGoal);
+    this.newGoal = {
+      goal: '',
+      description: '',
+      date: this.dateFormatted,
+      userFK: this.myId,
+    };
+    (this.$refs.create as Vue & { resetValidation: () => void }).resetValidation();
+  }
+
+  // Updates goal
+  public async updateGoal(): Promise<void> {
+    axios
+      .put('/api/goals', this.editedGoal)
+      .then(results => results.data)
+      .catch(err => console.log(err));
+    Object.assign(this.myGoals[this.editedIndex], this.editedGoal);
+    this.menu = false;
+  }
+
+  // Deletes goal entry
+  public async deleteGoal(item: Goal): Promise<void> {
+    const index: number = this.myGoals.indexOf(item);
+    this.myGoals.splice(index, 1);
+    axios.delete(`/api/goals/${item.id}`);
+  }
+
+  /* eslint class-methods-use-this: ["error", { "exceptMethods": ["finishGoal"] }] */
+  // Changes finished status of goal
+  public async finishGoal(item: Goal): Promise<void> {
+    item.finished = !item.finished ? 1 : 0;
+    axios.put('/api/goals', { id: item.id, finished: item.finished });
+  }
+
+  // Changes date of presented goals
+  public changeDate(change: number): void {
+    this.panel = [];
+    this.deviation += change;
+    const today = new Date();
+    const dateChoosen = today.setDate(today.getDate() + this.deviation);
+    this.dateFormatted = formatDate(dateChoosen);
+  }
+
+  // Filters presented goals
+  get filteredGoals() {
+    let myFilteredGoals = this.myGoals;
+    // Filters goals to accommodate dateFormatted
+    myFilteredGoals = myFilteredGoals.filter(
+      (goal: Goal) => goal.date === this.dateFormatted,
+    );
+    return myFilteredGoals;
+  }
+}
 </script>

@@ -37,45 +37,48 @@
     </v-card>
   </v-col>
 </template>
-<script>
-import axios from "axios";
-export default {
-  name: "Login",
-  data: () => ({
-    loginData: {
-      username: "",
-      password: ""
-    },
-    //Validation rules
-    generalRules: [v => !!v || "Bitte Feld ausfüllen"],
-    errorMsg: ""
-  }),
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import axios from 'axios';
+
+@Component
+export default class Login extends Vue {
+  private loginData: object = {
+    username: '',
+    password: '',
+  };
+
+  // Validation rules
+  private generalRules = [(v: string) => !!v || 'Bitte Feld ausfüllen'];
+
+  private errorMsg = '';
+
   created() {
     if (this.$store.getters.isLoggedIn) {
-      this.$router.push("/myGoals");
-    }
-  },
-  methods: {
-    //Checks if input is valid
-    validate() {
-      if (this.$refs.form.validate()) {
-        this.login();
-      }
-    },
-    //Login function
-    async login() {
-      try {
-        let data = await axios
-          .post("/api/users/login", this.loginData)
-          .then(response => response.data);
-        let token = data.token;
-        let user = data.user;
-        this.$store.dispatch("login", { token, user });
-        this.$router.push("/myGoals");
-      } catch (error) {
-        this.errorMsg = error.response.data.msg;
-      }
+      this.$router.push('/myGoals');
     }
   }
-};
+
+  // Checks if input is valid
+  public validate(): void {
+    if ((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
+      this.login();
+    }
+  }
+
+  // Login function
+  public async login(): Promise<void> {
+    try {
+      const data = await axios
+        .post('/api/users/login', this.loginData)
+        .then(response => response.data);
+      const { token, user } = data;
+      this.$store.dispatch('login', { token, user });
+      this.$router.push('/myGoals');
+    } catch (error) {
+      this.errorMsg = error.response.data.msg;
+    }
+  }
+}
 </script>

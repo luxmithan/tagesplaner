@@ -30,33 +30,39 @@
   </v-app>
 </template>
 
-<script>
-export default {
-  name: "App",
-  data: () => ({
-    isAuth: "",
-    username: "",
-    role: ""
-  }),
-  methods: {
-    init() {
-      this.isAuth = this.$store.getters.isLoggedIn;
-      if (this.isAuth) {
-        this.username = this.$store.getters.getUser.username;
-        this.role = this.$store.getters.getUser.role;
-      }
-    },
-    logout() {
-      this.isAuth = false;
-      this.$store.dispatch("logout");
-      this.$router.push("/login");
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+
+@Component
+export default class App extends Vue {
+  private isAuth = false;
+
+  private username?: string;
+
+  private role?: string;
+
+  public init(): void {
+    this.isAuth = this.$store.getters.isLoggedIn;
+    if (this.isAuth) {
+      ({
+        username: this.username,
+        role: this.role,
+      } = this.$store.getters.getUser);
     }
-  },
+  }
+
+  public logout(): void {
+    this.isAuth = false;
+    this.$store.dispatch('logout');
+    this.$router.push('/login');
+  }
+
   mounted() {
     this.init();
-  },
+  }
+
   updated() {
     this.init();
   }
-};
+}
 </script>
