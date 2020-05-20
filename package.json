@@ -2,6 +2,7 @@
   "name": "tagesplaner",
   "version": "1.0.0",
   "description": "Tagesplaner application to set goals",
+  "author": "Luxmithan Sukumar",
   "main": "server.js",
   "scripts": {
     "install-server": "npm install",
@@ -13,7 +14,6 @@
     "client": "npm run serve --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
-  "author": "Luxmithan Sukumar",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
