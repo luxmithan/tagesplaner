@@ -1,6 +1,6 @@
 /**
  * Author:      Luxmithan Sukumar
- * File name:   index.js
+ * File name:   server.js
  * Version:     1.0
  * Description: Main file to start productive application
  */
