@@ -1,6 +1,17 @@
 # Tagesplaner
 
-A webapp to set daily goals
+A webapp for students to set daily goals. The teachers have an overview of all daily goals including filters for date, grade, status and a search function.
+
+Frontend:
+- Vue.js with TypeScript
+- Vuetify
+
+Backend:
+- Rest API built with Express.js
+- JWT
+
+Database: 
+- MySQL
 
 ## Quick Start Guide
 
