@@ -10,7 +10,7 @@ Backend:
 - Rest API built with Express.js
 - JWT
 
-Database: 
+Database:
 - MySQL
 
 ## Quick Start Guide
