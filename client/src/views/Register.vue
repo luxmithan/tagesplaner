@@ -58,6 +58,10 @@
             prepend-icon="mdi-lock-outline"
             type="password"
           ></v-text-field>
+          <p
+            style="color:red;"
+            v-if="signupData.role === 'Lehrperson'">
+            Falls sie die Webapp testen wollen, ist das Masterpasswort "LehrerSein".</p>
           <v-text-field
             v-model="signupData.password"
             :rules="passwordRules"

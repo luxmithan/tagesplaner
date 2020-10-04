@@ -26,7 +26,7 @@ APP.use('/api/users', require('./routes/user'));
 APP.use('/api/goals', require('./routes/goal'));
 
 //Defines root folder for webapp build
-let root = `${__dirname}/../client/dist`;
+let root = `${__dirname}/client/dist`;
 APP.use(EXPRESS.static(root));
 APP.use(FALLBACK('index.html', { root }));
 

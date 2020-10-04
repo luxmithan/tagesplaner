@@ -18,6 +18,8 @@
         <v-btn v-if="!isAuth" text to="/register">Registrieren</v-btn>
         <v-btn v-if="isAuth" text to="/profile">{{username}}s Profil</v-btn>
         <v-btn v-if="isAuth" v-on:click="logout" text>Logout</v-btn>
+        <v-btn text href="https://github.com/luxmithan/tagesplaner" target="_blank">Repository
+        <v-icon>mdi-open-in-new</v-icon></v-btn>
       </v-col>
     </v-app-bar>
     <v-content class="grey lighten-3">

@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
     } else {
       // The masterpassword is stored here
       const MASTERPASSWORD =
-        '$2y$10$mNWaDZCXyrpwselN6ZLmKeii6gEQjj/HKt0BiMqgYEFTVnnDN/5jm';
+        '$2y$10$UFW2jY0p2RCJMIK0NS9nSOQivkyMXMGIn1FhRcItoLjh8nO64csAS';
       BCRYPT.compare(
         req.body.masterPassword,
         MASTERPASSWORD,
