@@ -8,10 +8,10 @@
 module.exports = require('knex')({
   client: 'mysql',
   connection: {
-    host: 'dno6xji1n8fm828n.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
-    user: 'vuwmoaub9w08dnzx',
-    password: 'ozupaycjg6bzo3hp',
-    database: 'fp5w7j7zad09op76',
+    host: 'phtfaw4p6a970uc0.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
+    user: 'ns8uhm83a23qcmzm',
+    password: 'h5bzgiupuu1jr6hj',
+    database: 'zdn09kahmiisx4ud',
     timezone: 'UTC',
     dateStrings: true
   }
