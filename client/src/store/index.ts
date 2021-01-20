@@ -5,11 +5,10 @@
  * Description: Vuex store Configurations
  */
 
+import Axios from 'axios';
 import Vue from 'vue';
 import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
-
-import Axios from 'axios';
 
 Vue.use(Vuex);
 const getDefaultState = () => ({
@@ -22,8 +21,8 @@ export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: getDefaultState(),
   getters: {
-    isLoggedIn: state => state.token,
-    getUser: state => state.user,
+    isLoggedIn: (state) => state.token,
+    getUser: (state) => state.user,
   },
   mutations: {
     setToken: (state, token) => {
@@ -32,7 +31,7 @@ export default new Vuex.Store({
     setUser: (state, user) => {
       state.user = user;
     },
-    reset: state => {
+    reset: (state) => {
       Object.assign(state, getDefaultState());
     },
   },

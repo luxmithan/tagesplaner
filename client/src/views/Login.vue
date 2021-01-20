@@ -72,7 +72,7 @@ export default class Login extends Vue {
     try {
       const data = await axios
         .post('/api/users/login', this.loginData)
-        .then(response => response.data);
+        .then((response) => response.data);
       const { token, user } = data;
       this.$store.dispatch('login', { token, user });
       this.$router.push('/myGoals');

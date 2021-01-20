@@ -8,11 +8,11 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 
-import MyGoals from '../views/MyGoals.vue';
 import AllGoals from '../views/AllGoals.vue';
+import Login from '../views/Login.vue';
+import MyGoals from '../views/MyGoals.vue';
 import Profile from '../views/Profile.vue';
 import Register from '../views/Register.vue';
-import Login from '../views/Login.vue';
 
 Vue.use(VueRouter);
 

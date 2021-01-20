@@ -45,7 +45,7 @@
           <v-select
             v-if="signupData.role === 'Lernende/r'"
             v-model="signupData.grade"
-            :rules="[ gradeRules ]"
+            :rules="[gradeRules]"
             :items="grades"
             label="Momentane Klasse"
             prepend-icon="mdi-badge-account-horizontal"
@@ -58,10 +58,9 @@
             prepend-icon="mdi-lock-outline"
             type="password"
           ></v-text-field>
-          <p
-            style="color:red;"
-            v-if="signupData.role === 'Lehrperson'">
-            Falls sie die Webapp testen wollen, ist das Masterpasswort "LehrerSein".</p>
+          <p style="color: red" v-if="signupData.role === 'Lehrperson'">
+            Falls sie die Webapp testen wollen, ist das Masterpasswort "LehrerSein".
+          </p>
           <v-text-field
             v-model="signupData.password"
             :rules="passwordRules"
@@ -72,7 +71,7 @@
           ></v-text-field>
           <v-text-field
             v-model="signupData.passwordRepeat"
-            :rules="[ passwordRepeatRules ]"
+            :rules="[passwordRepeatRules]"
             label="Passwort erneut eingeben"
             prepend-icon="mdi-lock"
             type="password"
@@ -117,15 +116,13 @@ export default class Register extends Vue {
 
   private usernameRules = [
     (v: string) => !!v || 'Bitte Feld ausfüllen',
-    (v: string) => (v && v.length <= 12)
-      || 'Der Username darf maximal 12 Zeichen lang sein',
+    (v: string) => (v && v.length <= 12) || 'Der Username darf maximal 12 Zeichen lang sein',
     (v: string) => (v && v.length >= 3) || 'Der Username muss minimal 3 Zeichen lang sein',
   ];
 
   private passwordRules = [
     (v: string) => !!v || 'Bitte Feld ausfüllen',
-    (v: string) => (v && v.length <= 20)
-      || 'Das Passwort darf maximal 20 Zeichen lang sein',
+    (v: string) => (v && v.length <= 20) || 'Das Passwort darf maximal 20 Zeichen lang sein',
     (v: string) => (v && v.length >= 6) || 'Das Passwort muss minimal 6 Zeichen lang sein',
   ];
 
@@ -136,10 +133,7 @@ export default class Register extends Vue {
   }
 
   masterRules() {
-    if (
-      this.signupData.role !== 'Lernende/r'
-      && !this.signupData.masterPassword
-    ) {
+    if (this.signupData.role !== 'Lernende/r' && !this.signupData.masterPassword) {
       return 'Bitte Feld ausfüllen';
     }
     return true;
@@ -155,7 +149,8 @@ export default class Register extends Vue {
   passwordRepeatRules() {
     if (!this.signupData.passwordRepeat) {
       return 'Bitte Feld ausfüllen';
-    } if (this.signupData.password !== this.signupData.passwordRepeat) {
+    }
+    if (this.signupData.password !== this.signupData.passwordRepeat) {
       return 'Die Beiden Passwörter stimmen nicht überein';
     }
     return true;

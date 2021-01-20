@@ -14,12 +14,12 @@
       <v-row v-for="(value, propertyName, index) in myProfile" :key="index" no-gutters>
         <v-col cols="4">
           <v-card tile outlined>
-            <v-card-title>{{propertyName}}:</v-card-title>
+            <v-card-title>{{ propertyName }}:</v-card-title>
           </v-card>
         </v-col>
         <v-col cols="8">
           <v-card tile outlined>
-            <v-card-title>{{value}}</v-card-title>
+            <v-card-title>{{ value }}</v-card-title>
           </v-card>
         </v-col>
       </v-row>
@@ -42,19 +42,16 @@
         ></v-text-field>
         <v-text-field
           v-model="newPasswordRepeat"
-          :rules="[ newPasswordRepeatRules ]"
+          :rules="[newPasswordRepeatRules]"
           label="Nochmal neues Passwort"
           prepend-icon="mdi-lock-outline"
           type="password"
           v-on:keyup.enter="validate"
         ></v-text-field>
         <v-alert v-if="errorMsg" dense outlined type="error">{{ errorMsg }}</v-alert>
-        <v-alert
-          v-if="success"
-          dense
-          outlined
-          type="success"
-        >Ihr Passwort wurde erfolgreich verändert.</v-alert>
+        <v-alert v-if="success" dense outlined type="success"
+          >Ihr Passwort wurde erfolgreich verändert.</v-alert
+        >
       </v-form>
       <v-btn class="ma-4" color="primary" @click="validate">Passwort ändern</v-btn>
       <v-divider></v-divider>
@@ -76,7 +73,7 @@ export default class Profile extends Vue {
     Vorname: '',
     Nachname: '',
     Rolle: '',
-  }
+  };
 
   private oldPassword = '';
 
@@ -92,11 +89,9 @@ export default class Profile extends Vue {
 
   private newPasswordRules = [
     (v: string) => !!v || 'Bitte neues Passwort eingeben',
-    (v: string) => (v && v.length <= 20)
-    || 'Das Passwort darf maximal 20 Zeichen lang sein',
-    (v: string) => (v && v.length >= 6)
-    || 'Das Passwort muss minimal 6 Zeichen lang sein',
-  ]
+    (v: string) => (v && v.length <= 20) || 'Das Passwort darf maximal 20 Zeichen lang sein',
+    (v: string) => (v && v.length >= 6) || 'Das Passwort muss minimal 6 Zeichen lang sein',
+  ];
 
   created() {
     if (!this.$store.getters.isLoggedIn) {
@@ -140,14 +135,17 @@ export default class Profile extends Vue {
         newPassword: this.newPassword,
         newPasswordRepeat: this.newPasswordRepeat,
       };
-      axios.put('/api/users', passwordData)
-        .then(response => response.data);
+      axios.put('/api/users', passwordData).then((response) => response.data);
       (this.$refs.form as Vue & { reset: () => void }).reset();
       this.success = true;
-      setTimeout(() => { this.success = false; }, 3000);
+      setTimeout(() => {
+        this.success = false;
+      }, 3000);
     } catch (error) {
       this.errorMsg = error.response.data.msg;
-      setTimeout(() => { this.errorMsg = false; }, 3000);
+      setTimeout(() => {
+        this.errorMsg = false;
+      }, 3000);
     }
   }
 
@@ -156,7 +154,7 @@ export default class Profile extends Vue {
     if (
       // eslint-disable-next-line
       window.confirm(
-        'Sind Sie sicher, dass Sie ihr Konto inklusive alle dazugehörigen Ziele löschen wollen?',
+        'Sind Sie sicher, dass Sie ihr Konto inklusive alle dazugehörigen Ziele löschen wollen?'
       )
     ) {
       axios.delete(`/api/user/delete/${this.myId}`);

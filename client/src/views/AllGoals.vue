@@ -17,7 +17,7 @@
         <v-toolbar-title>{{ dateFormatted }}</v-toolbar-title>
       </v-col>
       <v-col>
-        <v-btn v-if="deviation<0" text icon @click="changeDate(1)">
+        <v-btn v-if="deviation < 0" text icon @click="changeDate(1)">
           <v-icon>mdi-arrow-right-bold</v-icon>
         </v-btn>
       </v-col>
@@ -70,14 +70,9 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content class="mt-3">
           {{ item.description }}
-          <v-alert
-            class="mt-2"
-            v-if="item.comment"
-            dense
-            text
-            type="info"
-            width="96%"
-          >{{ item.comment }}</v-alert>
+          <v-alert class="mt-2" v-if="item.comment" dense text type="info" width="96%">{{
+            item.comment
+          }}</v-alert>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -156,20 +151,18 @@ export default class AllGoals extends Vue {
     let allFilteredGoals: Goal[] = this.allGoals;
     // Filter for date
     allFilteredGoals = allFilteredGoals.filter(
-      (goal: Goal) => goal.date === this.dateFormatted
-        && goal.userfull.toLowerCase().indexOf(this.searchName.toLowerCase())
-          > -1,
+      (goal: Goal) =>
+        goal.date === this.dateFormatted &&
+        goal.userfull.toLowerCase().indexOf(this.searchName.toLowerCase()) > -1
     );
     // Grade filter
     if (this.filterGrade) {
-      allFilteredGoals = allFilteredGoals.filter(
-        (goal: Goal) => goal.grade === this.filterGrade,
-      );
+      allFilteredGoals = allFilteredGoals.filter((goal: Goal) => goal.grade === this.filterGrade);
     }
     // Status filter
     if (this.filterFinished) {
       allFilteredGoals = allFilteredGoals.filter(
-        (goal: Goal) => goal.finished === this.status.indexOf(this.filterFinished),
+        (goal: Goal) => goal.finished === this.status.indexOf(this.filterFinished)
       );
     }
     // returns goals after filtering

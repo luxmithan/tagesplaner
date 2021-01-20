@@ -18,15 +18,15 @@
       </v-col>
       <v-col>
         <!--Shows if past date-->
-        <v-btn v-if="deviation<0" text icon @click="changeDate(1)">
+        <v-btn v-if="deviation < 0" text icon @click="changeDate(1)">
           <v-icon>mdi-arrow-right-bold</v-icon>
         </v-btn>
       </v-col>
     </v-toolbar>
     <!--Shows if present date-->
-    <div v-if="deviation===0">
+    <div v-if="deviation === 0">
       <div class="ma-4 pa-2">
-        <v-btn v-if="!goalForm" color="primary" @click="goalForm=true">Ziele hinzufügen</v-btn>
+        <v-btn v-if="!goalForm" color="primary" @click="goalForm = true">Ziele hinzufügen</v-btn>
         <!--Form to create goal-->
         <v-form v-else ref="create" class="justify-center">
           <template>
@@ -44,7 +44,7 @@
               :rules="descriptionRules"
               counter="2000"
             ></v-textarea>
-            <v-btn color="error" class="mr-2" @click="goalForm=false">Schliessen</v-btn>
+            <v-btn color="error" class="mr-2" @click="goalForm = false">Schliessen</v-btn>
             <v-btn color="success" @click="validateCreate">Ziel hinzufügen</v-btn>
           </template>
         </v-form>
@@ -102,7 +102,7 @@
                   overflow
                   label="Was ist gut gelaufen? Warum evtl. nicht fertig geworden?"
                   v-model="editedGoal.comment"
-                  :rules="[ commentRules ]"
+                  :rules="[commentRules]"
                   counter="255"
                 ></v-textarea>
               </v-list-item-content>
@@ -124,7 +124,7 @@
           <v-col class="text-center ml-4">{{ item.goal }}</v-col>
         </v-expansion-panel-header>
         <!-- Displays if present day-->
-        <div v-if="deviation===0" class="ma-2">
+        <div v-if="deviation === 0" class="ma-2">
           <v-btn v-if="item.finished" outlined color="success" @click="finishGoal(item)">
             <v-icon>mdi-check</v-icon>
           </v-btn>
@@ -142,17 +142,12 @@
           <p v-if="item.finished" class="success--text">Wurde fertig gemacht.</p>
           <p v-else class="error--text">Wurde nicht fertig gemacht.</p>
         </div>
-        <v-expansion-panel-content @click="menu=false">
+        <v-expansion-panel-content @click="menu = false">
           <v-divider></v-divider>
           <div class="ma-3">{{ item.description }}</div>
-          <v-alert
-            class="mt-2"
-            v-if="item.comment"
-            dense
-            text
-            type="info"
-            width="96%"
-          >{{ item.comment }}</v-alert>
+          <v-alert class="mt-2" v-if="item.comment" dense text type="info" width="96%">{{
+            item.comment
+          }}</v-alert>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -197,20 +192,19 @@ export default class MyGoals extends Vue {
   private newGoal: Goal = {
     goal: '',
     description: '',
-  }
+  };
 
   // Validation rules
   private goalRules = [
     (v: string) => !!v || 'Bitte Name des Ziels hinzufügen',
-    (v: string) => (v && v.length <= 30)
-      || 'Der Name des Ziels darf maximal 30 Zeichen lang sein.',
-  ]
+    (v: string) => (v && v.length <= 30) || 'Der Name des Ziels darf maximal 30 Zeichen lang sein.',
+  ];
 
   private descriptionRules = [
     (v: string) => !!v || 'Bitte Beschreibung des Ziels hinzufügen',
-    (v: string) => (v && v.length <= 2000)
-      || 'Die Beschreibung des Ziels darf maximal 2000 Zeichen lang sein.',
-  ]
+    (v: string) =>
+      (v && v.length <= 2000) || 'Die Beschreibung des Ziels darf maximal 2000 Zeichen lang sein.',
+  ];
 
   created() {
     if (!this.$store.getters.isLoggedIn) {
@@ -232,8 +226,8 @@ export default class MyGoals extends Vue {
     this.myId = this.$store.getters.getUser.id;
     this.myGoals = await axios
       .get(`/api/goals/${this.myId}`)
-      .then(results => results.data)
-      .catch(err => console.log(err));
+      .then((results) => results.data)
+      .catch((err) => console.log(err));
     this.loading = false;
     this.newGoal = {
       goal: '',
@@ -273,8 +267,8 @@ export default class MyGoals extends Vue {
   public async createGoal(): Promise<void> {
     this.newGoal.id = await axios
       .post('/api/goals', this.newGoal)
-      .then(results => results.data[0])
-      .catch(err => console.log(err));
+      .then((results) => results.data[0])
+      .catch((err) => console.log(err));
     this.myGoals.push(this.newGoal);
     this.newGoal = {
       goal: '',
@@ -289,8 +283,8 @@ export default class MyGoals extends Vue {
   public async updateGoal(): Promise<void> {
     axios
       .put('/api/goals', this.editedGoal)
-      .then(results => results.data)
-      .catch(err => console.log(err));
+      .then((results) => results.data)
+      .catch((err) => console.log(err));
     Object.assign(this.myGoals[this.editedIndex], this.editedGoal);
     this.menu = false;
   }
@@ -322,9 +316,7 @@ export default class MyGoals extends Vue {
   get filteredGoals() {
     let myFilteredGoals = this.myGoals;
     // Filters goals to accommodate dateFormatted
-    myFilteredGoals = myFilteredGoals.filter(
-      (goal: Goal) => goal.date === this.dateFormatted,
-    );
+    myFilteredGoals = myFilteredGoals.filter((goal: Goal) => goal.date === this.dateFormatted);
     return myFilteredGoals;
   }
 }

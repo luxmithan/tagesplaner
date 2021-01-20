@@ -16,10 +16,11 @@
       <v-col align="right" justify="right">
         <v-btn v-if="!isAuth" text to="/login">Login</v-btn>
         <v-btn v-if="!isAuth" text to="/register">Registrieren</v-btn>
-        <v-btn v-if="isAuth" text to="/profile">{{username}}s Profil</v-btn>
+        <v-btn v-if="isAuth" text to="/profile">{{ username }}s Profil</v-btn>
         <v-btn v-if="isAuth" v-on:click="logout" text>Logout</v-btn>
-        <v-btn text href="https://github.com/luxmithan/tagesplaner" target="_blank">Repository
-        <v-icon>mdi-open-in-new</v-icon></v-btn>
+        <v-btn text href="https://github.com/luxmithan/tagesplaner" target="_blank"
+          >Repository <v-icon>mdi-open-in-new</v-icon></v-btn
+        >
       </v-col>
     </v-app-bar>
     <v-content class="grey lighten-3">
@@ -46,10 +47,7 @@ export default class App extends Vue {
   public init(): void {
     this.isAuth = this.$store.getters.isLoggedIn;
     if (this.isAuth) {
-      ({
-        username: this.username,
-        role: this.role,
-      } = this.$store.getters.getUser);
+      ({ username: this.username, role: this.role } = this.$store.getters.getUser);
     }
   }
 
